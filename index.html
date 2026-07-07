@@ -1,12 +1,478 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Verify Email</title>
-  </head>
-  <body style="font-family: Arial; text-align: center; padding: 40px">
-    <h2 id="message">Verifying your email...</h2>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>✨ Verify Email · beautiful</title>
+    <!-- Google Font & simple icon CDN (optional but nice) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-    <script src="app.js"></script>
+      body {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family:
+          "Inter",
+          -apple-system,
+          BlinkMacSystemFont,
+          sans-serif;
+        background: linear-gradient(145deg, #f9f3ff 0%, #e9def5 100%);
+        padding: 20px;
+        margin: 0;
+      }
+
+      /* main card – glassmorphism + soft glow */
+      .verify-card {
+        max-width: 520px;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.5);
+        backdrop-filter: blur(14px) saturate(180%);
+        -webkit-backdrop-filter: blur(14px) saturate(180%);
+        background: rgba(255, 255, 255, 0.55);
+        border-radius: 56px;
+        padding: 48px 40px 56px;
+        box-shadow:
+          0 30px 60px -20px rgba(88, 44, 120, 0.25),
+          0 8px 24px -6px rgba(0, 0, 0, 0.05),
+          inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        text-align: center;
+        transition: transform 0.3s ease;
+      }
+
+      .verify-card:hover {
+        transform: translateY(-6px);
+      }
+
+      /* icon / illustration */
+      .envelope-icon {
+        font-size: 64px;
+        color: #7c4d9e;
+        background: linear-gradient(135deg, #b38bdb, #7c4d9e);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: inline-block;
+        margin-bottom: 16px;
+        filter: drop-shadow(0 8px 12px rgba(124, 77, 158, 0.2));
+        animation: float 4s ease-in-out infinite;
+      }
+
+      @keyframes float {
+        0% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-8px);
+        }
+        100% {
+          transform: translateY(0px);
+        }
+      }
+
+      /* main heading */
+      h1 {
+        font-size: 30px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        color: #2d1b3c;
+        margin-top: 8px;
+        margin-bottom: 12px;
+      }
+
+      .subhead {
+        font-size: 17px;
+        font-weight: 400;
+        color: #4d3b5e;
+        background: rgba(255, 255, 255, 0.4);
+        padding: 10px 18px;
+        border-radius: 100px;
+        display: inline-block;
+        backdrop-filter: blur(4px);
+        margin-bottom: 28px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+      }
+
+      /* dynamic message area */
+      #message {
+        font-size: 20px;
+        font-weight: 500;
+        color: #1f112b;
+        background: rgba(255, 255, 255, 0.4);
+        padding: 18px 20px;
+        border-radius: 40px;
+        backdrop-filter: blur(4px);
+        margin: 12px 0 28px;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+        min-height: 78px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      #message i {
+        color: #7c4d9e;
+        font-size: 26px;
+        background: rgba(124, 77, 158, 0.08);
+        padding: 6px;
+        border-radius: 60px;
+        width: 44px;
+        height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* loader animation inside message */
+      .loader-dot {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        background: #7c4d9e;
+        border-radius: 50%;
+        margin: 0 3px;
+        animation: pulse-dot 1.4s infinite ease-in-out both;
+      }
+      .loader-dot:nth-child(1) {
+        animation-delay: -0.32s;
+      }
+      .loader-dot:nth-child(2) {
+        animation-delay: -0.16s;
+      }
+      .loader-dot:nth-child(3) {
+        animation-delay: 0s;
+      }
+
+      @keyframes pulse-dot {
+        0%,
+        80%,
+        100% {
+          transform: scale(0.6);
+          opacity: 0.4;
+        }
+        40% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      /* verification badge / status */
+      .status-badge {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        background: rgba(255, 255, 255, 0.5);
+        border-radius: 60px;
+        padding: 8px 22px 8px 18px;
+        margin: 12px auto 18px;
+        width: fit-content;
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(4px);
+        font-size: 15px;
+        font-weight: 500;
+        color: #2d1b3c;
+      }
+
+      .status-badge i {
+        font-size: 18px;
+        color: #6f3d8f;
+      }
+
+      /* action button (just for demo) */
+      .action-btn {
+        display: inline-block;
+        background: linear-gradient(135deg, #9f72c7, #7c4d9e);
+        border: none;
+        color: white;
+        padding: 16px 44px;
+        border-radius: 60px;
+        font-weight: 600;
+        font-size: 18px;
+        letter-spacing: 0.3px;
+        box-shadow: 0 12px 28px -8px rgba(124, 77, 158, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(4px);
+        transition: all 0.25s ease;
+        cursor: pointer;
+        margin-top: 12px;
+        font-family: "Inter", sans-serif;
+      }
+
+      .action-btn:hover {
+        transform: scale(1.02);
+        box-shadow: 0 20px 36px -10px #7c4d9e88;
+        background: linear-gradient(135deg, #ad83d1, #6f3d8f);
+      }
+
+      .action-btn i {
+        margin-right: 10px;
+        font-size: 20px;
+      }
+
+      .action-btn:active {
+        transform: scale(0.97);
+      }
+
+      /* footer note */
+      .footnote {
+        margin-top: 32px;
+        font-size: 14px;
+        color: #5c4a6b;
+        opacity: 0.7;
+        letter-spacing: 0.3px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .footnote i {
+        color: #7c4d9e;
+        font-size: 13px;
+        opacity: 0.7;
+      }
+
+      /* responsive */
+      @media (max-width: 480px) {
+        .verify-card {
+          padding: 34px 20px 40px;
+          border-radius: 40px;
+        }
+        h1 {
+          font-size: 26px;
+        }
+        #message {
+          font-size: 18px;
+          padding: 16px;
+        }
+        .action-btn {
+          padding: 14px 32px;
+          font-size: 16px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="verify-card">
+      <!-- floating envelope -->
+      <div class="envelope-icon">
+        <i class="fas fa-envelope-open-text"></i>
+      </div>
+
+      <h1>Verify your email</h1>
+      <div class="subhead">
+        <i
+          class="fas fa-shield-alt"
+          style="margin-right: 8px; opacity: 0.7"
+        ></i>
+        one last step
+      </div>
+
+      <!-- status badge (dynamic) -->
+      <div class="status-badge" id="statusBadge">
+        <i class="fas fa-rotate-right fa-spin"></i>
+        <span>checking</span>
+      </div>
+
+      <!-- MAIN MESSAGE – will be updated by app.js -->
+      <div id="message">
+        <i class="fas fa-circle-notch fa-spin" style="font-size: 22px"></i>
+        <span>Verifying your email…</span>
+        <span class="loader-dot"></span>
+        <span class="loader-dot"></span>
+        <span class="loader-dot"></span>
+      </div>
+
+      <!-- interactive button (demo) -->
+      <button class="action-btn" id="resendBtn">
+        <i class="fas fa-paper-plane"></i> Resend verification
+      </button>
+
+      <div class="footnote">
+        <i class="fas fa-check-circle" style="color: #6f3d8f"></i>
+        <span>Check your inbox · secure link</span>
+        <i class="fas fa-circle" style="font-size: 5px; opacity: 0.3"></i>
+        <span style="opacity: 0.5">expires in 24h</span>
+      </div>
+    </div>
+
+    <!-- app.js – beautiful verification logic with delightful feedback -->
+    <script>
+      (function () {
+        "use strict";
+
+        // DOM elements
+        const messageEl = document.getElementById("message");
+        const statusBadge = document.getElementById("statusBadge");
+        const resendBtn = document.getElementById("resendBtn");
+
+        // helper: update UI with style & icon
+        function setMessage(
+          htmlContent,
+          iconClass = "fas fa-circle-notch fa-spin",
+        ) {
+          // we want to keep the structure clean: icon + text + optional dots
+          // but we rebuild it entirely to allow any html
+          messageEl.innerHTML = `
+          <i class="${iconClass}" style="font-size:22px; color:#7c4d9e;"></i>
+          <span>${htmlContent}</span>
+        `;
+        }
+
+        // show loading state (dots)
+        function showLoading(message = "Verifying your email") {
+          statusBadge.innerHTML = `<i class="fas fa-rotate-right fa-spin"></i><span>checking</span>`;
+          messageEl.innerHTML = `
+          <i class="fas fa-circle-notch fa-spin" style="font-size:22px; color:#7c4d9e;"></i>
+          <span>${message}</span>
+          <span class="loader-dot"></span>
+          <span class="loader-dot"></span>
+          <span class="loader-dot"></span>
+        `;
+        }
+
+        // success state
+        function showSuccess() {
+          statusBadge.innerHTML = `<i class="fas fa-check-circle" style="color:#3baa6b;"></i><span>verified ✓</span>`;
+          messageEl.innerHTML = `
+          <i class="fas fa-check-circle" style="font-size:28px; color:#3baa6b; background: rgba(59, 170, 107, 0.08); padding: 6px; border-radius: 60px; width: 48px; height: 48px; display: inline-flex; align-items: center; justify-content: center;"></i>
+          <span style="font-weight:600; color:#1f402a;">Email verified successfully!</span>
+          <span style="display:block; font-weight:400; font-size:16px; color:#3d5a4b; margin-top:4px;">Your account is now active.</span>
+        `;
+          // change badge style
+          const badge = statusBadge;
+          badge.style.background = "rgba(59, 170, 107, 0.12)";
+          badge.style.borderColor = "rgba(59, 170, 107, 0.25)";
+        }
+
+        // error state
+        function showError(message = "Verification failed. Please try again.") {
+          statusBadge.innerHTML = `<i class="fas fa-times-circle" style="color:#c94a6b;"></i><span>error</span>`;
+          messageEl.innerHTML = `
+          <i class="fas fa-exclamation-circle" style="font-size:28px; color:#c94a6b; background: rgba(201, 74, 107, 0.08); padding: 6px; border-radius: 60px; width: 48px; height: 48px; display: inline-flex; align-items: center; justify-content: center;"></i>
+          <span style="font-weight:500; color:#712b3f;">${message}</span>
+          <span style="display:block; font-weight:400; font-size:15px; color:#8f4b63; margin-top:4px;">We’ll resend the link in a moment.</span>
+        `;
+          const badge = statusBadge;
+          badge.style.background = "rgba(201, 74, 107, 0.08)";
+          badge.style.borderColor = "rgba(201, 74, 107, 0.2)";
+        }
+
+        // reset to default / idle (with loading dots)
+        function resetToVerifying() {
+          statusBadge.style.background = "rgba(255, 255, 255, 0.5)";
+          statusBadge.style.borderColor = "rgba(255, 255, 255, 0.6)";
+          showLoading("Verifying your email");
+        }
+
+        // ---------- simulate verification process ----------
+        function simulateVerification() {
+          // reset to loading state
+          resetToVerifying();
+
+          // random success / error (80% success to feel nice)
+          const isSuccess = Math.random() < 0.8;
+
+          // simulate async delay (1.8 - 2.8s)
+          const delay = 1800 + Math.random() * 1000;
+
+          // also update badge to "processing"
+          statusBadge.innerHTML = `<i class="fas fa-rotate-right fa-spin"></i><span>processing</span>`;
+
+          setTimeout(() => {
+            if (isSuccess) {
+              showSuccess();
+            } else {
+              showError("Verification timed out. Please resend.");
+            }
+          }, delay);
+        }
+
+        // ---------- resend action ----------
+        function handleResend() {
+          // change button to 'sending' state
+          const originalText = resendBtn.innerHTML;
+          resendBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Sending…`;
+          resendBtn.disabled = true;
+          resendBtn.style.opacity = "0.7";
+          resendBtn.style.cursor = "default";
+
+          // show loading on message
+          statusBadge.innerHTML = `<i class="fas fa-rotate-right fa-spin"></i><span>sending</span>`;
+          showLoading("Resending verification link");
+
+          // simulate resend
+          setTimeout(() => {
+            // restore button
+            resendBtn.innerHTML = `<i class="fas fa-paper-plane"></i> Resend verification`;
+            resendBtn.disabled = false;
+            resendBtn.style.opacity = "1";
+            resendBtn.style.cursor = "pointer";
+
+            // show a gentle success on badge
+            statusBadge.innerHTML = `<i class="fas fa-check" style="color:#3baa6b;"></i><span>resent</span>`;
+            // update message
+            messageEl.innerHTML = `
+            <i class="fas fa-envelope" style="font-size:26px; color:#7c4d9e; background: rgba(124, 77, 158, 0.06); padding: 6px; border-radius: 60px; width: 48px; height: 48px; display: inline-flex; align-items: center; justify-content: center;"></i>
+            <span style="font-weight:500;">Check your inbox 📬</span>
+            <span style="display:block; font-weight:400; font-size:16px; color:#4d3b5e; margin-top:2px;">A new link was sent to your email.</span>
+          `;
+
+            // after 1.2s, restart verification automatically (demo flow)
+            setTimeout(() => {
+              simulateVerification();
+            }, 1400);
+          }, 1400);
+        }
+
+        // ---------- event listeners ----------
+        resendBtn.addEventListener("click", handleResend);
+
+        // ---------- start on page load ----------
+        window.addEventListener("load", function () {
+          // small delay for dramatic effect
+          setTimeout(() => {
+            simulateVerification();
+          }, 400);
+        });
+
+        // extra: if user clicks on status badge (just for fun) reset
+        statusBadge.addEventListener("click", function () {
+          if (!resendBtn.disabled) {
+            simulateVerification();
+          }
+        });
+
+        // expose for debugging (optional)
+        window.__verify = {
+          reset: resetToVerifying,
+          success: showSuccess,
+          error: showError,
+          resend: handleResend,
+          simulate: simulateVerification,
+        };
+      })();
+    </script>
   </body>
 </html>
