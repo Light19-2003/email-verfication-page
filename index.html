@@ -3,12 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>✨ Verify Email · beautiful</title>
-    <!-- Google Font & simple icon CDN (optional but nice) -->
+    <title>Verify Email</title>
+    <!-- Google Font & Font Awesome -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap"
       rel="stylesheet"
     />
     <link
@@ -60,10 +60,9 @@
         transform: translateY(-6px);
       }
 
-      /* icon / illustration */
+      /* floating envelope */
       .envelope-icon {
         font-size: 64px;
-        color: #7c4d9e;
         background: linear-gradient(135deg, #b38bdb, #7c4d9e);
         -webkit-background-clip: text;
         background-clip: text;
@@ -86,7 +85,6 @@
         }
       }
 
-      /* main heading */
       h1 {
         font-size: 30px;
         font-weight: 700;
@@ -142,7 +140,7 @@
         justify-content: center;
       }
 
-      /* loader animation inside message */
+      /* loader dots */
       .loader-dot {
         display: inline-block;
         width: 10px;
@@ -175,7 +173,7 @@
         }
       }
 
-      /* verification badge / status */
+      /* status badge */
       .status-badge {
         display: flex;
         align-items: center;
@@ -191,46 +189,13 @@
         font-size: 15px;
         font-weight: 500;
         color: #2d1b3c;
+        transition: all 0.2s ease;
+        cursor: default;
       }
 
       .status-badge i {
         font-size: 18px;
         color: #6f3d8f;
-      }
-
-      /* action button (just for demo) */
-      .action-btn {
-        display: inline-block;
-        background: linear-gradient(135deg, #9f72c7, #7c4d9e);
-        border: none;
-        color: white;
-        padding: 16px 44px;
-        border-radius: 60px;
-        font-weight: 600;
-        font-size: 18px;
-        letter-spacing: 0.3px;
-        box-shadow: 0 12px 28px -8px rgba(124, 77, 158, 0.4);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        backdrop-filter: blur(4px);
-        transition: all 0.25s ease;
-        cursor: pointer;
-        margin-top: 12px;
-        font-family: "Inter", sans-serif;
-      }
-
-      .action-btn:hover {
-        transform: scale(1.02);
-        box-shadow: 0 20px 36px -10px #7c4d9e88;
-        background: linear-gradient(135deg, #ad83d1, #6f3d8f);
-      }
-
-      .action-btn i {
-        margin-right: 10px;
-        font-size: 20px;
-      }
-
-      .action-btn:active {
-        transform: scale(0.97);
       }
 
       /* footer note */
@@ -266,10 +231,6 @@
           font-size: 18px;
           padding: 16px;
         }
-        .action-btn {
-          padding: 14px 32px;
-          font-size: 16px;
-        }
       }
     </style>
   </head>
@@ -295,7 +256,7 @@
         <span>checking</span>
       </div>
 
-      <!-- MAIN MESSAGE – will be updated by app.js -->
+      <!-- MAIN MESSAGE – updated by script -->
       <div id="message">
         <i class="fas fa-circle-notch fa-spin" style="font-size: 22px"></i>
         <span>Verifying your email…</span>
@@ -303,8 +264,6 @@
         <span class="loader-dot"></span>
         <span class="loader-dot"></span>
       </div>
-
-      <!-- interactive button (demo) -->
 
       <div class="footnote">
         <i class="fas fa-check-circle" style="color: #6f3d8f"></i>
@@ -314,159 +273,92 @@
       </div>
     </div>
 
-    <!-- app.js – beautiful verification logic with delightful feedback -->
     <script>
       (function () {
         "use strict";
 
-        // DOM elements
         const messageEl = document.getElementById("message");
         const statusBadge = document.getElementById("statusBadge");
-        const resendBtn = document.getElementById("resendBtn");
 
-        // helper: update UI with style & icon
-        function setMessage(
-          htmlContent,
-          iconClass = "fas fa-circle-notch fa-spin",
-        ) {
-          // we want to keep the structure clean: icon + text + optional dots
-          // but we rebuild it entirely to allow any html
-          messageEl.innerHTML = `
-          <i class="${iconClass}" style="font-size:22px; color:#7c4d9e;"></i>
-          <span>${htmlContent}</span>
-        `;
-        }
-
-        // show loading state (dots)
+        // ----- helper: show loading (with dots) -----
         function showLoading(message = "Verifying your email") {
           statusBadge.innerHTML = `<i class="fas fa-rotate-right fa-spin"></i><span>checking</span>`;
-          messageEl.innerHTML = `
-          <i class="fas fa-circle-notch fa-spin" style="font-size:22px; color:#7c4d9e;"></i>
-          <span>${message}</span>
-          <span class="loader-dot"></span>
-          <span class="loader-dot"></span>
-          <span class="loader-dot"></span>
-        `;
-        }
-
-        // success state
-        function showSuccess() {
-          statusBadge.innerHTML = `<i class="fas fa-check-circle" style="color:#3baa6b;"></i><span>verified ✓</span>`;
-          messageEl.innerHTML = `
-          <i class="fas fa-check-circle" style="font-size:28px; color:#3baa6b; background: rgba(59, 170, 107, 0.08); padding: 6px; border-radius: 60px; width: 48px; height: 48px; display: inline-flex; align-items: center; justify-content: center;"></i>
-          <span style="font-weight:600; color:#1f402a;">Email verified successfully!</span>
-          <span style="display:block; font-weight:400; font-size:16px; color:#3d5a4b; margin-top:4px;">Your account is now active.</span>
-        `;
-          // change badge style
-          const badge = statusBadge;
-          badge.style.background = "rgba(59, 170, 107, 0.12)";
-          badge.style.borderColor = "rgba(59, 170, 107, 0.25)";
-        }
-
-        // error state
-        function showError(message = "Verification failed. Please try again.") {
-          statusBadge.innerHTML = `<i class="fas fa-times-circle" style="color:#c94a6b;"></i><span>error</span>`;
-          messageEl.innerHTML = `
-          <i class="fas fa-exclamation-circle" style="font-size:28px; color:#c94a6b; background: rgba(201, 74, 107, 0.08); padding: 6px; border-radius: 60px; width: 48px; height: 48px; display: inline-flex; align-items: center; justify-content: center;"></i>
-          <span style="font-weight:500; color:#712b3f;">${message}</span>
-          <span style="display:block; font-weight:400; font-size:15px; color:#8f4b63; margin-top:4px;">We’ll resend the link in a moment.</span>
-        `;
-          const badge = statusBadge;
-          badge.style.background = "rgba(201, 74, 107, 0.08)";
-          badge.style.borderColor = "rgba(201, 74, 107, 0.2)";
-        }
-
-        // reset to default / idle (with loading dots)
-        function resetToVerifying() {
           statusBadge.style.background = "rgba(255, 255, 255, 0.5)";
           statusBadge.style.borderColor = "rgba(255, 255, 255, 0.6)";
+          messageEl.innerHTML = `
+        <i class="fas fa-circle-notch fa-spin" style="font-size:22px; color:#7c4d9e;"></i>
+        <span>${message}</span>
+        <span class="loader-dot"></span>
+        <span class="loader-dot"></span>
+        <span class="loader-dot"></span>
+      `;
+        }
+
+        // ----- success -----
+        function showSuccess() {
+          statusBadge.innerHTML = `<i class="fas fa-check-circle" style="color:#3baa6b;"></i><span>verified ✓</span>`;
+          statusBadge.style.background = "rgba(59, 170, 107, 0.12)";
+          statusBadge.style.borderColor = "rgba(59, 170, 107, 0.25)";
+          messageEl.innerHTML = `
+        <i class="fas fa-check-circle" style="font-size:28px; color:#3baa6b; background: rgba(59, 170, 107, 0.08); padding: 6px; border-radius: 60px; width: 48px; height: 48px; display: inline-flex; align-items: center; justify-content: center;"></i>
+        <span style="font-weight:600; color:#1f402a;">Email verified successfully!</span>
+        <span style="display:block; font-weight:400; font-size:16px; color:#3d5a4b; margin-top:4px;">Your account is now active.</span>
+      `;
+        }
+
+        // ----- error -----
+        function showError(message = "Verification failed. Please try again.") {
+          statusBadge.innerHTML = `<i class="fas fa-times-circle" style="color:#c94a6b;"></i><span>error</span>`;
+          statusBadge.style.background = "rgba(201, 74, 107, 0.08)";
+          statusBadge.style.borderColor = "rgba(201, 74, 107, 0.2)";
+          messageEl.innerHTML = `
+        <i class="fas fa-exclamation-circle" style="font-size:28px; color:#c94a6b; background: rgba(201, 74, 107, 0.08); padding: 6px; border-radius: 60px; width: 48px; height: 48px; display: inline-flex; align-items: center; justify-content: center;"></i>
+        <span style="font-weight:500; color:#712b3f;">${message}</span>
+        <span style="display:block; font-weight:400; font-size:15px; color:#8f4b63; margin-top:4px;">Please check your email or try again later.</span>
+      `;
+        }
+
+        // ----- reset to verifying state -----
+        function resetToVerifying() {
           showLoading("Verifying your email");
         }
 
-        // ---------- simulate verification process ----------
+        // ----- simulate verification (random success/error) -----
         function simulateVerification() {
-          // reset to loading state
           resetToVerifying();
 
-          // random success / error (80% success to feel nice)
+          // 80% success rate
           const isSuccess = Math.random() < 0.8;
-
-          // simulate async delay (1.8 - 2.8s)
           const delay = 1800 + Math.random() * 1000;
 
-          // also update badge to "processing"
           statusBadge.innerHTML = `<i class="fas fa-rotate-right fa-spin"></i><span>processing</span>`;
 
           setTimeout(() => {
             if (isSuccess) {
               showSuccess();
             } else {
-              showError("Verification timed out. Please resend.");
+              showError("Verification timed out. Please try again.");
             }
           }, delay);
         }
 
-        // ---------- resend action ----------
-        function handleResend() {
-          // change button to 'sending' state
-          const originalText = resendBtn.innerHTML;
-          resendBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Sending…`;
-          resendBtn.disabled = true;
-          resendBtn.style.opacity = "0.7";
-          resendBtn.style.cursor = "default";
-
-          // show loading on message
-          statusBadge.innerHTML = `<i class="fas fa-rotate-right fa-spin"></i><span>sending</span>`;
-          showLoading("Resending verification link");
-
-          // simulate resend
-          setTimeout(() => {
-            // restore button
-            resendBtn.innerHTML = `<i class="fas fa-paper-plane"></i> Resend verification`;
-            resendBtn.disabled = false;
-            resendBtn.style.opacity = "1";
-            resendBtn.style.cursor = "pointer";
-
-            // show a gentle success on badge
-            statusBadge.innerHTML = `<i class="fas fa-check" style="color:#3baa6b;"></i><span>resent</span>`;
-            // update message
-            messageEl.innerHTML = `
-            <i class="fas fa-envelope" style="font-size:26px; color:#7c4d9e; background: rgba(124, 77, 158, 0.06); padding: 6px; border-radius: 60px; width: 48px; height: 48px; display: inline-flex; align-items: center; justify-content: center;"></i>
-            <span style="font-weight:500;">Check your inbox 📬</span>
-            <span style="display:block; font-weight:400; font-size:16px; color:#4d3b5e; margin-top:2px;">A new link was sent to your email.</span>
-          `;
-
-            // after 1.2s, restart verification automatically (demo flow)
-            setTimeout(() => {
-              simulateVerification();
-            }, 1400);
-          }, 1400);
-        }
-
-        // ---------- event listeners ----------
-        resendBtn.addEventListener("click", handleResend);
-
-        // ---------- start on page load ----------
+        // ----- start on load -----
         window.addEventListener("load", function () {
-          // small delay for dramatic effect
           setTimeout(() => {
             simulateVerification();
           }, 400);
         });
 
-        // extra: if user clicks on status badge (just for fun) reset
+        // extra: click on status badge to replay (just for fun / demo)
         statusBadge.addEventListener("click", function () {
-          if (!resendBtn.disabled) {
-            simulateVerification();
-          }
+          simulateVerification();
         });
 
-        // expose for debugging (optional)
+        // expose for debugging
         window.__verify = {
           reset: resetToVerifying,
           success: showSuccess,
           error: showError,
-          resend: handleResend,
           simulate: simulateVerification,
         };
       })();
